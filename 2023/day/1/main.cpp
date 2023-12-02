@@ -3,8 +3,8 @@
 #include <regex>
 #include <string>
 
-// std::regex pattern("[1-9]"); // part 1
-std::regex pattern(
+std::regex pattern_part_1("[1-9]");
+std::regex pattern_part_2(
     "[1-9]"
     "|oneight|twone|threeight|fiveight|sevenine|eightwo|eighthree|nineight"
     "|one|two|three|four|five|six|seven|eight|nine");
@@ -21,35 +21,36 @@ std::unordered_map<std::string, int> digits = {
     {"sevenine", 79}, {"eightwo", 82}, {"eighthree", 83}, {"nineight", 98},
 };
 
-int main() {
-  std::ifstream inputFile("input");
+int solve(std::ifstream &input_file, std::regex &pattern) {
+  std::string line;
+  int sum = 0;
 
-  if (!inputFile.is_open()) {
+  while (std::getline(input_file, line)) {
+    std::sregex_iterator it(line.begin(), line.end(), pattern);
+    std::sregex_iterator end;
+
+    std::string first_match = it->str(), last_match;
+    while (it != end) {
+      last_match = it->str();
+      ++it;
+    }
+
+    int first = digits[first_match] / 10;
+    int last = digits[last_match] % 10;
+    sum += first * 10 + last;
+  }
+
+  return sum;
+}
+
+int main() {
+  std::ifstream input_file("input");
+
+  if (!input_file.is_open()) {
     std::cerr << "Could not open input file" << std::endl;
     return 1;
   }
 
-  std::string line;
-  int sum = 0;
-
-  while (std::getline(inputFile, line)) {
-
-    std::sregex_iterator it(line.begin(), line.end(), pattern);
-    std::sregex_iterator end;
-    std::vector<std::string> matches;
-
-    while (it != end) {
-      matches.push_back(it->str());
-      ++it;
-    }
-
-    int first = digits[matches[0]] / 10;
-    int last = digits[matches[matches.size() - 1]] % 10;
-    sum += first * 10 + last;
-  }
-
-  std::cout << sum << std::endl;
-
-  inputFile.close();
+  std::cout << solve(input_file, pattern_part_2) << std::endl;
   return 0;
 }
