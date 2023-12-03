@@ -47,7 +47,7 @@ int main() {
   std::ifstream input_file("input");
 
   if (!input_file.is_open()) {
-    std::cerr << "Could not open input file" << std::endl;
+    std::cerr << "Failed to open input file" << std::endl;
     return 1;
   }
 
